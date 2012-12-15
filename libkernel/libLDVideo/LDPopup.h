@@ -1,5 +1,5 @@
 //
-//  LDVideo.h
+//  LDPopup.h
 //  libLDVideo
 //
 //  Created by Sidney
@@ -16,33 +16,30 @@
 //  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef _LDVideo_H_
-#define _LDVideo_H_
+#ifndef _LDPOPUP_H_
+#define _LDPOPUP_H_
 
 #include <libio/libio.h>
 #include "LDView.h"
-#include "LDLabel.h"
-#include "LDPopup.h"
 
-class LDVideoModule : public IOModule
+class LDPopup : public LDView
 {
 public:
-	virtual bool publish();
-	virtual void unpublish();
+	virtual LDPopup *initWithText(IOString *text, IOString *title);
 
-	void drawViews();
+	virtual void draw();
 
-	LDView *rootView() { return _rootView; }
-	LDView *debugLabel() { return _debugLabel; }
+	void show();
+	void close();
 
 private:
-	LDView *_rootView;
-	LDLabel *_debugLabel;
+	virtual void free();
 
-	void printDebugMessage(const char *message);
-	static void handleSyslogdMessage(const char *message);
+	bool _visible;
+	IOString *_text;
+	IOString *_title;
 
-	IODeclareClass(LDVideoModule)
+	IODeclareClass(LDPopup)
 };
 
-#endif /* _LDVideo_H_ */
+#endif

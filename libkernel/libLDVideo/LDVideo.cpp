@@ -32,10 +32,16 @@ extern "C" void vd_setCursor(uint32_t x, uint32_t y);
 
 static uint8_t *LDVideoMemory = (uint8_t *)0xB8000;
 static LDVideoModule *sharedModule = 0;
+static LDView *LDRootView = 0;
 static IORemoteCommand *debugCommand = 0;
 
 #define kLDVideoWidth  80
 #define kLDVideoHeight 25
+
+LDView *LDView::rootView()
+{
+	return LDRootView;
+}
 
 bool LDVideoModule::publish()
 {
@@ -50,12 +56,12 @@ bool LDVideoModule::publish()
 	vd_setCursor(0, 0);
 	memset(LDVideoMemory, 0, kLDVideoHeight * kLDVideoWidth * 2);
 
-	_rootView = LDView::alloc()->initWithFrame(LDFrameMake(0, 0, kLDVideoWidth, kLDVideoHeight));
+	LDRootView = _rootView = LDView::alloc()->initWithFrame(LDFrameMake(0, 0, kLDVideoWidth, kLDVideoHeight));
 	_rootView->_backgroundColor = LDConstants::colorBlue;
 
 	_debugLabel= LDLabel::alloc()->initWithFrame(LDFrameMake(1, 0, 78, 5));
 	_debugLabel->setDrawBorder(true);
-	//_debugLabel->setHidden(true);
+	_debugLabel->setHidden(true);
 
 	_rootView->addSubview(_debugLabel);
 

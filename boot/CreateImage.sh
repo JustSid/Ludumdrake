@@ -4,6 +4,7 @@ runobjdump=true
 
 ## Arrays
 drivers=(libkernel libio libLDGame libLDVideo libLDInput)
+etc=(ld_intro.txt)
 
 ## Misc
 cmdline="--debug"
@@ -27,6 +28,12 @@ for i in ${drivers[@]}; do
 	if [ $runobjdump = true ]; then
 		objdump -d "$BASEDIR/../libkernel/${i}/${i}.so" > "$BASEDIR/../libkernel/${i}/dump.txt"
 	fi
+done
+
+## Copy the /etc/ files
+for i in ${etc[@]}; do
+	echo -e -n "\tmodule /modules/${i} ${i}\n" >> $grubpath
+	cp "$BASEDIR/../etc/${i}" "$BASEDIR/image/modules/${i}"
 done
 
 ## Finish the grub.cfg and copy the kernel

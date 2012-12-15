@@ -54,6 +54,7 @@ class LDView : public IOObject
 friend class LDVideoModule;
 public:
 	virtual LDView *initWithFrame(const LDFrame& frame);
+	static LDView *rootView();
 
 	void setNeedsRedraw();
 	void redrawIfNeeded();
@@ -75,6 +76,8 @@ public:
 	LDFrame bounds();
 
 protected:
+	virtual void free();
+
 	void setCharacter(uint32_t x, uint32_t y, char c);
 	void setColor(uint32_t x, uint32_t y, LDColor color);
 

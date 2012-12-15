@@ -49,7 +49,19 @@ void LDGameModule::handleInput(uint8_t *_scancode, char *_character)
 	}
 	else
 	{
-		IOLog("Scancode: %x", scancode);
+		switch(scancode)
+		{
+			case 0:
+			{
+				LDView *view = _renderer->debugLabel();
+				view->setHidden(!view->hidden());
+				break;
+			}
+
+			default:
+				IOLog("Scancode: %x", scancode);
+				break;
+		}
 	}
 }
 
@@ -100,6 +112,11 @@ void LDGameModule::initGame()
 	LDIsland *startIsland = (LDIsland *)_islands->objectAtIndex((LDRandom() % islands));
 	startIsland->takeIsland();
 	_playerIslands->addObject(startIsland);
+
+	IOString *introText = IOString::withCString((char *)kern_contentsOfFile("ld_intro.txt"));
+	LDPopup *popup = LDPopup::alloc()->initWithText(introText, IOString::withCString("Welcome"));
+	popup->show();
+	popup->release();
 }
 
 bool LDGameModule::publish()

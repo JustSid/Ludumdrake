@@ -286,6 +286,18 @@ IOReturn kern_registerForInterrupt(uint32_t interrupt, bool exclusive, void *own
 	return kIOReturnError;
 }
 
+// Ludumdrake
+uint8_t *kern_contentsOfFile(const char *name)
+{
+	struct multiboot_module_s *module = sys_multibootModuleWithName(name);
+	if(module)
+	{
+		return module->start;
+	}
+
+	return NULL;
+}
+
 // Symbol lookup
 
 // List of exported symbols from the kernel
@@ -323,7 +335,8 @@ const char *__io_exportedSymbolNames[] = {
 	"time_getBootTime",
 	// Ludumdrake
 	"syslogd_setMessageHandler",
-	"vd_setCursor"
+	"vd_setCursor",
+	"kern_contentsOfFile"
 };
 
 io_library_t *__io_kernelLibrary = NULL;

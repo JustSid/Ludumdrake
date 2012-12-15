@@ -27,6 +27,8 @@
 #include "LDGameView.h"
 #include "LDIsland.h"
 
+extern "C" uint8_t *kern_contentsOfFile(const char *name);
+
 class LDGameModule : public IOModule
 {
 public:

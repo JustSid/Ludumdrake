@@ -39,6 +39,15 @@ LDView *LDView::initWithFrame(const LDFrame& frame)
 	return this;
 }
 
+void LDView::free()
+{
+	if(_backbuffer)
+		kfree(_backbuffer);
+
+	_subviews->release();
+	super::free();
+}
+
 void LDView::setFrame(const LDFrame& frame)
 {
 	_frame = frame;
