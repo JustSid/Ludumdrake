@@ -1,5 +1,5 @@
 //
-//  LDGame.h
+//  LDRandom.h
 //  libLDGame
 //
 //  Created by Sidney
@@ -16,21 +16,12 @@
 //  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef _LDGame_H_
-#define _LDGame_H_
+#ifndef _LDRANDOM_H_
+#define _LDRANDOM_H_
 
-#include <libio/libio.h>
-#include <libLDVideo/LDVideo.h>
+#include <libkernel/libkernel.h>
 
-#include "LDRandom.h"
+uint32_t LDRandom();
+void LDRandomSeed(uint32_t seed);
 
-class LDGameModule : public IOModule
-{
-public:
-	virtual bool publish();
-	virtual void unpublish();
-
-	IODeclareClass(LDGameModule)
-};
-
-#endif /* _LDGame_H_ */
+#endif

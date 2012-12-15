@@ -28,8 +28,10 @@ IORegisterClass(LDGameModule, super);
 
 bool LDGameModule::publish()
 {
-	IOModule *video = IOModule::withName("libLDVideo.so");
+	LDVideoModule *video = (LDVideoModule *)IOModule::withName("libLDVideo.so");
 	video->waitForPublish();
+
+	LDRandomSeed((uint32_t)time_getUnixTime());
 
 	return super::publish();
 }
