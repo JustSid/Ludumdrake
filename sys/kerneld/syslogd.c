@@ -66,6 +66,7 @@ void syslogd_queueMessage(syslog_level_t level, const char *message)
 	if(syslogd_customHandler)
 	{
 		syslogd_customHandler(message);
+		spinlock_unlock(&syslogd_lock);
 		return;
 	}
 
@@ -113,6 +114,8 @@ void syslogd_flush()
 // Evil as fuck in case the lock is currently held by someone...
 void syslogd_forceFlush()
 {
+	syslogd_customHandler = NULL;
+
 	if(!syslogd_running)
 		return;
 

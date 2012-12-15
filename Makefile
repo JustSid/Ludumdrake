@@ -1,5 +1,5 @@
 KERNEL_DIR  = sys
-LIBS_DIR    = lib
+LIBKERN_DIR = libkernel
 
 ALLDIRS = $(KERNEL_DIR) $(LIBKERN_DIR)
 
