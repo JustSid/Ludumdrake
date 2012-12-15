@@ -59,6 +59,14 @@ public:
 	LDFrame frame();
 	LDFrame bounds();
 
+protected:
+	void setCharacter(uint32_t x, uint32_t y, char c);
+	void setColor(uint32_t x, uint32_t y, LDColor color);
+
+	LDFrame _frame;
+	uint8_t *_backbuffer;
+	LDColor _backgroundColor;
+
 private:
 	void allocateBackbuffer();
 
@@ -68,11 +76,19 @@ private:
 	bool _drawBorder;
 	bool _needsRedraw;
 
-	LDFrame _frame;
-	uint8_t *_backbuffer;
-	LDColor _backgroundColor;
-
 	IODeclareClass(LDView)
 };
+
+inline void LDView::setCharacter(uint32_t x, uint32_t y, char c)
+{
+	uint32_t offset = (y * _frame.width + x) * 2;
+	_backbuffer[offset] = c;
+}
+
+inline void LDView::setColor(uint32_t x, uint32_t y, LDColor color)
+{
+	uint32_t offset = (y * _frame.width + x) * 2;
+	_backbuffer[offset + 1] = color;
+}
 
 #endif

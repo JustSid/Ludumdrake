@@ -1,5 +1,5 @@
 //
-//  LDVideo.h
+//  LDLabel.h
 //  libLDVideo
 //
 //  Created by Sidney
@@ -16,32 +16,26 @@
 //  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef _LDVideo_H_
-#define _LDVideo_H_
+#ifndef _LDLABEL_H_
+#define _LDLABEL_H_
 
 #include <libio/libio.h>
 #include "LDView.h"
-#include "LDLabel.h"
 
-class LDVideoModule : public IOModule
+class LDLabel : public LDView
 {
 public:
-	virtual bool publish();
-	virtual void unpublish();
+	virtual LDLabel *initWithFrame(const LDFrame &frame);
+	virtual void draw();
 
-	void drawViews();
+	void setString(IOString *string);
+	void appendString(IOString *string);
+
+	IOString *string();
 
 private:
-	IOTimerEventSource *_eventSource;
-	LDView *_rootView;
-	LDLabel *_debugLabel;
-
-	void printDebugMessage(const char *message);
-	static void handleSyslogdMessage(const char *message);
-
-	uint32_t cursorX, cursorY;
-
-	IODeclareClass(LDVideoModule)
+	IOString *_string;
+	IODeclareClass(LDLabel)
 };
 
-#endif /* _LDVideo_H_ */
+#endif

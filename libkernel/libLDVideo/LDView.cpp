@@ -31,7 +31,7 @@ LDView *LDView::initWithFrame(const LDFrame& frame)
 		return 0;
 
 	_frame = frame;
-	_backgroundColor = LDConstants::colorTransparent;
+	_backgroundColor = LDConstants::colorLightGray;
 	_subviews = IOArray::alloc()->init();
 
 	allocateBackbuffer();

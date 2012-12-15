@@ -38,9 +38,7 @@ namespace LDConstants
 		colorLightRed,
 		colorLightMagenta,
 		colorYellow,
-		colorWhite,
-
-		colorTransparent = 0xFF
+		colorWhite
 	};
 }
 

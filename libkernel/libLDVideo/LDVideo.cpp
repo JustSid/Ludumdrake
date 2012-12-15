@@ -32,6 +32,7 @@ extern "C" void vd_setCursor(uint32_t x, uint32_t y);
 
 static uint8_t *LDVideoMemory = (uint8_t *)0xB8000;
 static LDVideoModule *sharedModule = 0;
+static IORemoteCommand *debugCommand = 0;
 
 #define kLDVideoWidth  80
 #define kLDVideoHeight 25
@@ -50,15 +51,17 @@ bool LDVideoModule::publish()
 	_rootView = LDView::alloc()->initWithFrame(LDFrameMake(0, 0, kLDVideoWidth, kLDVideoHeight));
 	_rootView->_backgroundColor = LDConstants::colorBlue;
 
-	LDView *test = LDView::alloc()->initWithFrame(LDFrameMake(10, 5, 20, 5));
-	test->_backgroundColor = LDConstants::colorRed;
-	test->setDrawBorder(true);
+	_debugLabel= LDLabel::alloc()->initWithFrame(LDFrameMake(0, 0, 80, 5));
+	_debugLabel->setDrawBorder(true);
+	_rootView->addSubview(_debugLabel);
 
-	_rootView->addSubview(test);
+	debugCommand = IORemoteCommand::alloc()->init();
+	debugCommand->setAction(this, IOMemberFunctionCast(IORemoteCommand::Action, this, &LDVideoModule::printDebugMessage));
 	
 	_eventSource = IOTimerEventSource::alloc()->initWithDate(IODate::alloc()->initWithTimestampSinceNow(5), true);
 	_eventSource->setAction(this, IOMemberFunctionCast(IOTimerEventSource::Action, this, &LDVideoModule::drawViews));
 
+	runLoop()->addEventSource(debugCommand);
 	runLoop()->addEventSource(_eventSource);
 
 	return true;
@@ -74,28 +77,12 @@ void LDVideoModule::drawViews()
 
 void LDVideoModule::printDebugMessage(const char *message)
 {
-	while(*message != '\0')
-	{
-		if(*message == '\n')
-		{
-			cursorY ++;
-			cursorX = 0;
-
-			message ++;
-		}
-
-		uint32_t index = (cursorY * kLDVideoWidth + cursorX) * 2;
-		LDVideoMemory[index] = *message;
-		LDVideoMemory[index + 1] = 0x7;
-
-		cursorX ++;
-		message ++;
-	}
+	_debugLabel->appendString(IOString::withCString(message));
 }
 
 void LDVideoModule::handleSyslogdMessage(const char *message)
 {
-	sharedModule->printDebugMessage(message);
+	debugCommand->executeCommand((void *)message);
 }
 
 void LDVideoModule::unpublish()
