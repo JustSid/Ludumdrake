@@ -29,6 +29,7 @@ static spinlock_t __ioglued_lock = SPINLOCK_INIT_LOCKED;
 static array_t *__ioglued_modulesToStop = NULL;
 
 const char *ioglued_modules[] = {
+	"libLDInput.so",
 	"libLDVideo.so",
 	"libLDGame.so"
 };

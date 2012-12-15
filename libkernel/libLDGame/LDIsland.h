@@ -1,5 +1,5 @@
 //
-//  LDGame.h
+//  LDIsland.h
 //  libLDGame
 //
 //  Created by Sidney
@@ -16,39 +16,35 @@
 //  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef _LDGame_H_
-#define _LDGame_H_
+#ifndef _LDISLAND_H_
+#define _LDISLAND_H_
 
 #include <libio/libio.h>
 #include <libLDVideo/LDVideo.h>
-#include <libLDInput/LDInput.h>
 
-#include "LDRandom.h"
-#include "LDGameView.h"
-#include "LDIsland.h"
-
-class LDGameModule : public IOModule
+class LDIsland : public LDView
 {
 public:
-	virtual bool publish();
-	virtual void unpublish();
+	virtual LDIsland *initWithFrame(const LDFrame &frame);
+
+	virtual void draw();
+
+	void generate(uint32_t maxWidth, uint32_t maxHeight);
+	void takeIsland();
 
 private:
-	void initGame();
-	void gameTick();
-	void handleInput(uint8_t *scancode, char *character);
+	enum
+	{
+		TileTypeSand = 1,
+		TileTypeGrass,
+		TileTypeForest,
+		TileTypeMountain
+	};
 
-	LDVideoModule *_renderer;
-	LDInputModule *_inputManager;
+	bool _independent;
+	uint8_t *_tiles;
 
-	IORemoteCommand *_rendererCommand;
-	IOTimerEventSource *_heartbeat;
-
-	LDGameView *_gameView;
-	IOArray *_playerIslands;
-	IOArray *_islands;
-
-	IODeclareClass(LDGameModule)
+	IODeclareClass(LDIsland)
 };
 
-#endif /* _LDGame_H_ */
+#endif

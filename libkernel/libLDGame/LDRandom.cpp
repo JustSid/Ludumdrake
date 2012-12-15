@@ -29,6 +29,7 @@ static int LDRandomNext = 0;
 
 void LDRandomSeed(uint32_t seed)
 {
+	printf("Seed: %x\n", seed);
 	LDRandomX[0] = seed & 0xffffffffUL;
 
 	for(int i=1; i<N; i++)
@@ -68,4 +69,9 @@ uint32_t LDRandom()
 	y ^= y >> 18;
 
 	return y;
+}
+
+uint32_t LDRandomRange(uint32_t min, uint32_t max)
+{
+	return min + LDRandom() % (max - min);
 }

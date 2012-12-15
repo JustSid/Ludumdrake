@@ -22,6 +22,8 @@
 #include <libkernel/libkernel.h>
 
 uint32_t LDRandom();
+uint32_t LDRandomRange(uint32_t min, uint32_t max);
+
 void LDRandomSeed(uint32_t seed);
 
 #endif

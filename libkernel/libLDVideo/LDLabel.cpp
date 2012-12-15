@@ -53,7 +53,7 @@ void LDLabel::draw()
 	{
 		if(*temp == '\n')
 		{
-			if((++ lines) >= _frame.height - inset)
+			if((++ lines) >= _frame.height - (inset + 1))
 			{
 				offset = (temp + 1) - string;
 				break;

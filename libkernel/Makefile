@@ -1,4 +1,4 @@
-ALLDIRS = libkernel libio libLDVideo libLDGame
+ALLDIRS = libkernel libio libLDInput libLDVideo libLDGame
 
 all:
 	for i in $(ALLDIRS); do make -C $$i; done

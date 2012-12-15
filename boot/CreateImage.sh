@@ -3,7 +3,7 @@ BASEDIR="$(cd -P "$(dirname "$0")" && pwd)"
 runobjdump=true
 
 ## Arrays
-drivers=(libkernel libio libLDVideo libLDGame)
+drivers=(libkernel libio libLDGame libLDVideo libLDInput)
 
 ## Misc
 cmdline="--debug"

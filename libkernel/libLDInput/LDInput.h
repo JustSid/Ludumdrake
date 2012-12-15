@@ -1,6 +1,6 @@
 //
-//  LDGame.h
-//  libLDGame
+//  LDInput.h
+//  libLDInput
 //
 //  Created by Sidney
 //  Copyright (c) 2012 by Sidney
@@ -16,39 +16,31 @@
 //  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef _LDGame_H_
-#define _LDGame_H_
+#ifndef _LDInput_H_
+#define _LDInput_H_
 
 #include <libio/libio.h>
-#include <libLDVideo/LDVideo.h>
-#include <libLDInput/LDInput.h>
 
-#include "LDRandom.h"
-#include "LDGameView.h"
-#include "LDIsland.h"
-
-class LDGameModule : public IOModule
+class LDInputModule : public IOModule
 {
 public:
 	virtual bool publish();
 	virtual void unpublish();
 
+	void handleInput();
+
+	void setKeyDownCommand(IORemoteCommand *command);
+	void setKeyUpCommand(IORemoteCommand *command);
+
 private:
-	void initGame();
-	void gameTick();
-	void handleInput(uint8_t *scancode, char *character);
+	bool _isRepeat;
+	bool _shiftPressed;
 
-	LDVideoModule *_renderer;
-	LDInputModule *_inputManager;
+	IOInterruptEventSource *_interruptSource;
+	IORemoteCommand *_keyDownCommand;
+	IORemoteCommand *_keyUpCommand;
 
-	IORemoteCommand *_rendererCommand;
-	IOTimerEventSource *_heartbeat;
-
-	LDGameView *_gameView;
-	IOArray *_playerIslands;
-	IOArray *_islands;
-
-	IODeclareClass(LDGameModule)
+	IODeclareClass(LDInputModule)
 };
 
-#endif /* _LDGame_H_ */
+#endif /* _LDInput_H_ */

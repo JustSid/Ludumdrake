@@ -114,6 +114,41 @@ void LDView::redrawIfNeeded()
 	}
 }
 
+void LDView::drawSubviews()
+{
+	for(uint32_t i=0; i<_subviews->count(); i++)
+	{
+		LDView *subview = (LDView *)_subviews->objectAtIndex(i);
+		subview->redrawIfNeeded();
+
+		if(!subview->hidden())
+		{
+			LDFrame frame = subview->frame();
+			size_t width = frame.width * 2;
+
+			for(uint32_t i=0; i<frame.height; i++)
+			{
+				uint32_t offsetVMem = ((frame.y + i) * _frame.width + frame.x) * 2;
+				uint32_t offsetView = i * width;
+
+				uint8_t *backbuffer = subview->_backbuffer;
+
+				for(uint32_t j=0; j<frame.width * 2; j+=2)
+				{
+					if(backbuffer[offsetView + j + 1] == LDConstants::colorTransparent)
+						continue;
+
+
+					_backbuffer[offsetVMem + j] = backbuffer[offsetView + j];
+					_backbuffer[offsetVMem + j + 1] = backbuffer[offsetView + j + 1];
+				}
+			}
+		}
+
+		subview->drawSubviews();
+	}
+}
+
 void LDView::draw()
 {
 	for(uint32_t x=0; x<_frame.width; x++)
@@ -164,27 +199,6 @@ void LDView::draw()
 					_backbuffer[offset+0] = 187;
 					_backbuffer[offset+1] = LDConstants::colorLightGray;
 				}
-			}
-		}
-	}
-
-	for(uint32_t i=0; i<_subviews->count(); i++)
-	{
-		LDView *subview = (LDView *)_subviews->objectAtIndex(i);
-		subview->redrawIfNeeded();
-
-		if(!subview->hidden())
-		{
-			LDFrame frame = subview->frame();
-			size_t width = frame.width * 2;
-
-			for(uint32_t i=0; i<frame.height; i++)
-			{
-				uint32_t offsetVMem = ((frame.y + i) * _frame.width + frame.x) * 2;
-				uint32_t offsetView = i * width;
-
-				uint8_t *backbuffer = subview->_backbuffer;
-				memcpy(&_backbuffer[offsetVMem], &backbuffer[offsetView], frame.width * 2);
 			}
 		}
 	}

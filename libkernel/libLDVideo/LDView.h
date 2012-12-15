@@ -38,6 +38,16 @@ static inline LDFrame LDFrameMake(uint32_t x, uint32_t y, uint32_t width, uint32
 	return frame;
 }
 
+static inline bool LDFrameIntersects(const LDFrame& frame1, const LDFrame& frame2)
+{
+	uint32_t right1 = frame1.x + frame1.width;
+	uint32_t bottom1 = frame1.y + frame1.height;
+	uint32_t right2 = frame2.x + frame2.width;
+	uint32_t bottom2 = frame2.y + frame2.height;
+
+	return !(frame2.x > right1 || right2 < frame1.x || frame2.y > bottom1 || bottom2 < frame1.y);
+}
+
 class LDVideoModule;
 class LDView : public IOObject
 {
@@ -73,6 +83,7 @@ protected:
 	LDColor _backgroundColor;
 
 private:
+	void drawSubviews();
 	void allocateBackbuffer();
 
 	LDView *_parent;

@@ -53,8 +53,10 @@ bool LDVideoModule::publish()
 	_rootView = LDView::alloc()->initWithFrame(LDFrameMake(0, 0, kLDVideoWidth, kLDVideoHeight));
 	_rootView->_backgroundColor = LDConstants::colorBlue;
 
-	_debugLabel= LDLabel::alloc()->initWithFrame(LDFrameMake(0, 0, 80, 5));
+	_debugLabel= LDLabel::alloc()->initWithFrame(LDFrameMake(1, 0, 78, 5));
 	_debugLabel->setDrawBorder(true);
+	//_debugLabel->setHidden(true);
+
 	_rootView->addSubview(_debugLabel);
 
 	debugCommand = IORemoteCommand::alloc()->init();
@@ -69,6 +71,8 @@ bool LDVideoModule::publish()
 void LDVideoModule::drawViews()
 {
 	_rootView->redrawIfNeeded();
+	_rootView->drawSubviews();
+	
 	memcpy(LDVideoMemory, _rootView->_backbuffer, kLDVideoWidth * kLDVideoHeight * 2);
 }
 
