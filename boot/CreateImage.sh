@@ -3,8 +3,6 @@ BASEDIR="$(cd -P "$(dirname "$0")" && pwd)"
 runobjdump=true
 
 ## Arrays
-programs=(hellostatic)
-libraries=()
 drivers=(libkernel libio libLDVideo libLDGame)
 
 ## Misc
@@ -20,26 +18,6 @@ mkdir -p "$BASEDIR/image/modules"
 
 ## Create the grub.cfg
 echo -e -n "GRUB_DEFAULT=0\nGRUB_TIMEOUT=1\n\nmenuentry \"Firedrake\" {\n\tmultiboot /boot/firedrake $cmdline\n\tmodule /boot/firedrake firedrake\n" > $grubpath
-
-## Copy programs
-for i in ${programs[@]}; do
-	echo -e -n "\tmodule /modules/${i}.bin ${i}.bin\n" >> $grubpath
-	cp "$BASEDIR/../bin/${i}/${i}.bin" "$BASEDIR/image/modules/${i}.bin"
-
-	if [ $runobjdump = true ]; then
-		objdump -d "$BASEDIR/../bin/${i}/${i}.bin" > "$BASEDIR/../bin/${i}/dump.txt"
-	fi
-done
-
-## Copy libraries
-for i in ${libraries[@]}; do
-	echo -e -n "\tmodule /modules/${i}.so ${i}.so\n" >> $grubpath
-	cp "$BASEDIR/../lib/${i}/${i}.so" "$BASEDIR/image/modules/${i}.so"
-
-	if [ $runobjdump = true ]; then
-		objdump -d "$BASEDIR/../lib/${i}/${i}.so" > "$BASEDIR/../lib/${i}/dump.txt"
-	fi
-done
 
 ## Copy drivers
 for i in ${drivers[@]}; do
