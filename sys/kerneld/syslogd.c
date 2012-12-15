@@ -30,6 +30,7 @@
 static spinlock_t syslogd_lock = SPINLOCK_INIT;
 static ringbuffer_t *syslogd_buffer = NULL;
 static bool syslogd_running = false;
+static syslogd_message_handler_t syslogd_customHandler = NULL;
 
 static syslog_level_t __syslog_level = LOG_WARNING;
 static vd_color_t __sylog_color_table[] = {
@@ -41,6 +42,10 @@ static vd_color_t __sylog_color_table[] = {
 	vd_color_lightBlue 		// LOG_DEBUG
 };
 
+void syslogd_setMessageHandler(syslogd_message_handler_t handler)
+{
+	syslogd_customHandler = handler;
+}
 
 void syslogd_queueMessage(syslog_level_t level, const char *message)
 {
@@ -55,6 +60,12 @@ void syslogd_queueMessage(syslog_level_t level, const char *message)
 		vd_writeString(message);
 
 		spinlock_unlock(&syslogd_lock);
+		return;
+	}
+
+	if(syslogd_customHandler)
+	{
+		syslogd_customHandler(message);
 		return;
 	}
 

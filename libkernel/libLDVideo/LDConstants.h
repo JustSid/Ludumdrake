@@ -1,9 +1,9 @@
 //
-//  PCIDeviceResource.h
-//  libPCI
+//  LDConstants.h
+//  libLDVideo
 //
-//  Created by Sidney Just
-//  Copyright (c) 2012 by Sidney Just
+//  Created by Sidney
+//  Copyright (c) 2012 by Sidney
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
 //  documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
 //  the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, 
@@ -16,49 +16,34 @@
 //  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef _PCIDEVICERESOURCE_H_
-#define _PCIDEVICERESOURCE_H_
+#ifndef _LDCONSTANTS_H_
+#define _LDCONSTANTS_H_
 
-#include <libio/libio.h>
-
-typedef enum
+namespace LDConstants
 {
-	kPCIDeviceResourceTypeMemory,
-	kPCIDeviceResourceTypeIOPort
-} PCIDeviceResourceType;
+	enum color
+	{
+		colorBlack,
+		colorBlue,
+		colorGreen,
+		colorCyan,
+		colorRed,
+		colorMagenta,
+		colorBrown,
+		colorLightGray,
+		colorDarkGray,
+		colorLightBlue,
+		colorLightGreen,
+		colorLightCyan,
+		colorLightRed,
+		colorLightMagenta,
+		colorYellow,
+		colorWhite,
 
-class PCIDevice;
-class PCIDeviceResource : public IOObject
-{
-public:
-	PCIDeviceResource *initWithData(PCIDevice *device, PCIDeviceResourceType type, uint8_t bar);
+		colorTransparent = 0xFF
+	};
+}
 
-	virtual IOString *description() const;
+typedef LDConstants::color LDColor;
 
-	PCIDeviceResourceType type() const
-	{ return _type; }
-
-	uint8_t bar() const
-	{ return _bar; }
-
-	uint32_t address() const
-	{ return _address; }
-	uint32_t start() const
-	{ return _address; }
-	size_t size() const
-	{ return _size; }
-
-private:
-	PCIDevice *_device;
-	PCIDeviceResourceType _type;
-
-	bool _prefetchable;
-
-	uint32_t _address;
-	size_t _size;
-	uint8_t _bar;
-
-	IODeclareClass(PCIDeviceResource)
-};
-
-#endif /* _PCIDEVICERESOURCE_H_ */
+#endif

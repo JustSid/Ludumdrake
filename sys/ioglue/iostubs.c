@@ -320,7 +320,10 @@ const char *__io_exportedSymbolNames[] = {
 	"time_convertTimestamp",
 	"time_getTimestamp",
 	"time_getUnixTime",
-	"time_getBootTime"
+	"time_getBootTime",
+	// Ludumdrake
+	"syslogd_setMessageHandler",
+	"vd_setCursor"
 };
 
 io_library_t *__io_kernelLibrary = NULL;

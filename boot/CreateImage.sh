@@ -5,7 +5,7 @@ runobjdump=true
 ## Arrays
 programs=(hellostatic)
 libraries=()
-drivers=(libkernel libio libPCI libRTL8139)
+drivers=(libkernel libio libLDVideo libLDGame)
 
 ## Misc
 cmdline="--debug"

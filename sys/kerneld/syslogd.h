@@ -22,6 +22,10 @@
 #include <types.h>
 #include <system/syslog.h>
 
+typedef void (*syslogd_message_handler_t)(const char *);
+
+void syslogd_setMessageHandler(syslogd_message_handler_t handler);
+
 void syslogd_queueMessage(syslog_level_t level, const char *message);
 void syslogd_setLogLevel(syslog_level_t level);
 

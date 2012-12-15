@@ -1,9 +1,9 @@
 //
-//  IORunLoop.h
-//  libio
+//  LDVideo.h
+//  libLDVideo
 //
-//  Created by Sidney Just
-//  Copyright (c) 2012 by Sidney Just
+//  Created by Sidney
+//  Copyright (c) 2012 by Sidney
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
 //  documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
 //  the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, 
@@ -16,54 +16,30 @@
 //  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef _IORUNLOOP_H_
-#define _IORUNLOOP_H_
+#ifndef _LDVideo_H_
+#define _LDVideo_H_
 
-#include <libkernel/spinlock.h>
+#include <libio/libio.h>
+#include "LDView.h"
 
-#include "IOObject.h"
-#include "IOArray.h"
-#include "IOSet.h"
-#include "IOEventSource.h"
-
-class IOThread;
-
-class IORunLoop : public IOObject
+class LDVideoModule : public IOModule
 {
-friend class IOThread;
-friend class IOEventSource;
 public:
-	static IORunLoop *currentRunLoop();	
+	virtual bool publish();
+	virtual void unpublish();
 
-	bool isOnThread();
-
-	void run();
-	void stop();
-
-	void addEventSource(IOEventSource *eventSource);
-	void removeEventSource(IOEventSource *eventSource);
-
-protected:
-	void step();
-	void signalWorkAvailable();
+	void drawViews();
 
 private:
-	virtual IORunLoop *initWithThread(IOThread *thread);
-	virtual void free();
+	IOTimerEventSource *_eventSource;
+	LDView *_rootView;
 
-	void processEventSources();
+	void printDebugMessage(const char *message);
+	static void handleSyslogdMessage(const char *message);
 
-	IOThread *_host;
-	IOArray *_eventSources;
-	IOSet *_removedSources;
+	uint32_t cursorX, cursorY;
 
-	timestamp_t _nextStep;
-
-	bool _doingStep;
-	bool _shouldStop;
-	kern_spinlock_t _lock;
-
-	IODeclareClass(IORunLoop)
+	IODeclareClass(LDVideoModule)
 };
 
-#endif /* _IORUNLOOP_H_ */
+#endif /* _LDVideo_H_ */

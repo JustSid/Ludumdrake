@@ -1,6 +1,6 @@
 //
-//  RTL8139Controller.h
-//  libRTL8139
+//  LDView.h
+//  libLDVideo
 //
 //  Created by Sidney
 //  Copyright (c) 2012 by Sidney
@@ -16,53 +16,63 @@
 //  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef _RTL8139SERVICE_H_
-#define _RTL8139SERVICE_H_
+#ifndef _LDVIEW_H_
+#define _LDVIEW_H_
 
 #include <libio/libio.h>
-#include <libPCI/PCIDevice.h>
+#include "LDConstants.h"
 
-class RTL8139Controller : public IOEthernetController
+struct LDFrame
 {
-public:
-	virtual bool start(IOProvider *provider);
-	virtual void stop(IOProvider *provider);
-
-	virtual IOString *description() const;
-
-	void sendData(IOData *data);
-	bool reset();
-
-private:
-	void handleInterrupt(IOInterruptEventSource *source, uint32_t interrupt);
-
-	void writeRegister8(uint8_t reg, uint8_t value);
-	void writeRegister16(uint8_t reg, uint16_t value);
-	void writeRegister32(uint8_t reg, uint32_t value);
-
-	uint8_t readRegister8(uint8_t reg);
-	uint16_t readRegister16(uint8_t reg);
-	uint32_t readRegister32(uint8_t reg);
-
-	kern_spinlock_t _lock;
-
-	IODMARegion *_receiveRegion;
-	IODMARegion *_transmitRegion;
-
-	PCIDevice *_device;
-	IOInterruptEventSource *_interruptSource;
-	IOArray *_queuedData;
-
-	uint32_t _portBase;
-	uint64_t _macAddress;
-
-	uint32_t _currentBuffer;
-
-	uint8_t *_transmitBuffer;
-	uint8_t *_receiveBuffer;
-	size_t _receiveBufferOffset;
-
-	IODeclareClass(RTL8139Controller)
+	uint32_t x, y;
+	uint32_t width, height;
 };
 
-#endif /* _RTL8139SERVICE_H_ */
+static inline LDFrame LDFrameMake(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+{
+	LDFrame frame;
+	frame.x = x;
+	frame.y = y;
+	frame.width  = width;
+	frame.height = height;
+	return frame;
+}
+
+class LDVideoModule;
+class LDView : public IOObject
+{
+friend class LDVideoModule;
+public:
+	virtual LDView *initWithFrame(const LDFrame& frame);
+
+	void setNeedsRedraw();
+	void redrawIfNeeded();
+
+	virtual void draw();
+
+	void addSubview(LDView *subview);
+	void removeFromSuperview();
+
+	void setDrawBorder(bool drawBorder);
+
+	virtual void setFrame(const LDFrame& frame);
+	LDFrame frame();
+	LDFrame bounds();
+
+private:
+	void allocateBackbuffer();
+
+	LDView *_parent;
+	IOArray *_subviews;
+
+	bool _drawBorder;
+	bool _needsRedraw;
+
+	LDFrame _frame;
+	uint8_t *_backbuffer;
+	LDColor _backgroundColor;
+
+	IODeclareClass(LDView)
+};
+
+#endif

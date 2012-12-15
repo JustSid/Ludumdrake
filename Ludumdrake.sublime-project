@@ -2,7 +2,7 @@
 	"folders":
 	[
 		{
-			"name": "Firedrake",
+			"name": "Ludumdrake",
 			"path": "./",
 			"file_exclude_patterns": ["*.sublime-workspace", "*.sublime-project", "*.gitignore"],
 			"folder_exclude_patterns": ["libkernel"]
@@ -13,9 +13,9 @@
 		"sublimeclang_enabled": true,
 		"sublimeclang_options":
 		[
-			"-I${folder:${project_path:Firedrake.sublime-project}}/sys/.",
-			"-I${folder:${project_path:Firedrake.sublime-project}}/bin/.",
-			"-I${folder:${project_path:Firedrake.sublime-project}}/lib/.",
+			"-I${folder:${project_path:Ludumdrake.sublime-project}}/sys/.",
+			"-I${folder:${project_path:Ludumdrake.sublime-project}}/bin/.",
+			"-I${folder:${project_path:Ludumdrake.sublime-project}}/lib/.",
 			"-m32",
 			"-Wall",
 			"-Wextra",
@@ -29,7 +29,7 @@
 	"build_systems":
 	[
 		{
-			"name": "Build Firedrake",
+			"name": "Build Ludumdrake",
 			"working_dir": "${project_path}",
 			"cmd": ["exec ./remotebuild.sh"],
 			"shell": true,
