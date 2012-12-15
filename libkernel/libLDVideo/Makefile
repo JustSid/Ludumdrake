@@ -4,10 +4,10 @@ include ../Makefile.rules
 SRCS = $(shell find $(CURDIR) -type f \( -name "*.c" -o -name "*.S" -o -name "*.cpp" \))
 OBJS = $(addsuffix .o, $(basename $(SRCS)))
 
-LDFLAGS += -L../libio/ -L../libkernel/
+LDFLAGS += -L../libio/ -L../libkernel/ -L../libLDInput
 
 libLDVideo.so: $(OBJS)
-	$(LD) $(LDFLAGS) -o $@ $^ -lkernel -lio
+	$(LD) $(LDFLAGS) -o $@ $^ -lkernel -lio -lLDInput
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $^ 

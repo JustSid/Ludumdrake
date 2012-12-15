@@ -23,11 +23,10 @@
 #endif
 #define super IOModule
 
-#define kMinIslands 8
-#define kMaxIslands 12
-
 IORegisterModule(LDGameModule);
 IORegisterClass(LDGameModule, super);
+
+extern void LDResponderDispatchKeyEvent(uint8_t scancode, char character);
 
 void LDGameModule::gameTick()
 {
@@ -43,75 +42,27 @@ void LDGameModule::handleInput(uint8_t *_scancode, char *_character)
 	char character = *_character;
 	uint8_t scancode = *_scancode;
 
-	if(character != '\0')
+	switch(scancode)
 	{
-		printf("%c", character);
-	}
-	else
-	{
-		switch(scancode)
+		case 0:
 		{
-			case 0:
-			{
-				LDView *view = _renderer->debugLabel();
-				view->setHidden(!view->hidden());
-				break;
-			}
-
-			default:
-				IOLog("Scancode: %x", scancode);
-				break;
+			LDView *view = _renderer->debugLabel();
+			view->setHidden(!view->hidden());
+			break;
 		}
+
+		default:
+			LDResponderDispatchKeyEvent(scancode, character);
+			break;
 	}
 }
 
 void LDGameModule::initGame()
 {
 	_gameView = LDGameView::alloc()->initWithFrame(LDFrameMake(0, 0, 80, 25));
+	_gameView->becomeFirstResponder();
+
 	_renderer->rootView()->insertSubview(_gameView, 0);
-
-	uint32_t islands = LDRandomRange(kMinIslands, kMaxIslands);
-	for(uint32_t i=0; i<islands; i++)
-	{
-		LDIsland *island = LDIsland::alloc()->initWithFrame(LDFrameMake(0, 0, 1, 1));
-		
-		while(1)
-		{
-			island->generate(LDRandomRange(10, 20), LDRandomRange(10, 20));
-			LDFrame frame = island->frame();
-
-			uint32_t x = LDRandomRange(0, 80 - frame.width);
-			uint32_t y = LDRandomRange(0, 25 - frame.height);
-
-			frame = LDFrameMake(x, y, frame.width, frame.height);
-
-			bool fitsInPlace = true;
-
-			for(uint32_t j=0; j<_islands->count(); j++)
-			{
-				LDIsland *other = (LDIsland *)_islands->objectAtIndex(j);
-
-				if(LDFrameIntersects(frame, other->frame()))
-				{
-					fitsInPlace = false;
-					break;
-				}
-			}
-
-			if(fitsInPlace)
-			{
-				island->setFrame(frame);
-				break;
-			}
-		}
-
-		_gameView->addSubview(island);
-		_islands->addObject(island);
-	}
-
-	LDIsland *startIsland = (LDIsland *)_islands->objectAtIndex((LDRandom() % islands));
-	startIsland->takeIsland();
-	_playerIslands->addObject(startIsland);
 
 	IOString *introText = IOString::withCString((char *)kern_contentsOfFile("ld_intro.txt"));
 	LDPopup *popup = LDPopup::alloc()->initWithText(introText, IOString::withCString("Welcome"));
@@ -132,11 +83,7 @@ bool LDGameModule::publish()
 	_renderer->waitForPublish();
 	_inputManager->waitForPublish();
 
-
 	LDRandomSeed((uint32_t)time_getUnixTime());
-
-	_islands = IOArray::alloc()->init();
-	_playerIslands = IOArray::alloc()->init();
 
 	_rendererCommand = IORemoteCommand::alloc()->init();
 	_rendererCommand->setAction(this, 0);

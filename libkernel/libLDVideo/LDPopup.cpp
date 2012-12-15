@@ -77,6 +77,21 @@ void LDPopup::free()
 	super::free();
 }
 
+bool LDPopup::handleEvent(uint8_t UNUSED(scancode), char key)
+{
+	if(key == '\n')
+	{
+		close();
+		return true;
+	}
+
+	return false;
+}
+
+bool LDPopup::canBecomeFirstResponder()
+{
+	return true;
+}
 
 void LDPopup::show()
 {
@@ -86,6 +101,8 @@ void LDPopup::show()
 		root->addSubview(this);
 
 		_visible = true;
+
+		becomeFirstResponder();
 	}
 }
 
@@ -94,6 +111,10 @@ void LDPopup::close()
 	if(_visible)
 	{
 		_visible = false;
+		
+		retain();
+		autorelease();
+
 		removeFromSuperview();
 	}
 }

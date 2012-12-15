@@ -17,6 +17,7 @@
 //
 
 #include "LDGameView.h"
+#include "LDRandom.h"
 
 #ifdef super
 #undef super
@@ -25,12 +26,105 @@
 
 IORegisterClass(LDGameView, super);
 
+
+#define kMinIslands 8
+#define kMaxIslands 12
+
 LDGameView *LDGameView::initWithFrame(const LDFrame &frame)
 {
 	if(!super::initWithFrame(frame))
 		return 0;
 
+	_islands = IOArray::alloc()->init();
+	_playerIslands = IOArray::alloc()->init();
+
+	uint32_t islands = LDRandomRange(kMinIslands, kMaxIslands);
+	for(uint32_t i=0; i<islands; i++)
+	{
+		LDIsland *island = LDIsland::alloc()->initWithFrame(LDFrameMake(0, 0, 1, 1));
+		
+		while(1)
+		{
+			island->generate(LDRandomRange(10, 20), LDRandomRange(10, 20));
+			LDFrame frame = island->frame();
+
+			uint32_t x = LDRandomRange(0, 80 - frame.width);
+			uint32_t y = LDRandomRange(0, 25 - frame.height);
+
+			frame = LDFrameMake(x, y, frame.width, frame.height);
+
+			bool fitsInPlace = true;
+
+			for(uint32_t j=0; j<_islands->count(); j++)
+			{
+				LDIsland *other = (LDIsland *)_islands->objectAtIndex(j);
+
+				if(LDFrameIntersects(frame, other->frame()))
+				{
+					fitsInPlace = false;
+					break;
+				}
+			}
+
+			if(fitsInPlace)
+			{
+				island->setFrame(frame);
+				break;
+			}
+		}
+
+		addSubview(island);
+		_islands->addObject(island);
+	}
+
+	_selected = (LDRandom() % islands);
+	_selectedIsland = (LDIsland *)_islands->objectAtIndex(_selected);
+
+	_selectedIsland->takeIsland();
+	_playerIslands->addObject(_selectedIsland);
+
+	selectIsland(_selected);
+
 	return this;
+}
+
+void LDGameView::selectIsland(int32_t index)
+{
+	_selectedIsland->setSelected(false);
+	_selected = index;
+
+	if(_selected < 0)
+		_selected = _islands->count() - 1;
+
+	if(_selected >= (int32_t)_islands->count())
+		_selected = 0;
+
+	_selectedIsland = (LDIsland *)_islands->objectAtIndex(_selected);
+	_selectedIsland->setSelected(true);
+
+	IOLog("Selected island %i", _selected);
+
+	setNeedsRedraw();
+}
+
+bool LDGameView::handleEvent(uint8_t scancode, char UNUSED(key))
+{
+	switch(scancode)
+	{
+		case 75:
+			selectIsland(_selected + 1);
+			break;
+
+		case 77:
+			selectIsland(_selected - 1);
+			break;
+
+		default:
+			IOLog("Scancode: %i", scancode);
+			break;
+	}
+
+	return true;
 }
 
 void LDGameView::tick()

@@ -1,6 +1,6 @@
 //
-//  LDGame.h
-//  libLDGame
+//  LDResponder.cpp
+//  libLDInput
 //
 //  Created by Sidney
 //  Copyright (c) 2012 by Sidney
@@ -16,39 +16,68 @@
 //  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef _LDGame_H_
-#define _LDGame_H_
+#include "LDResponder.h"
 
-#include <libio/libio.h>
-#include <libLDVideo/LDVideo.h>
-#include <libLDInput/LDInput.h>
+#ifdef super
+#undef super
+#endif
+#define super IOObject
 
-#include "LDRandom.h"
-#include "LDGameView.h"
-#include "LDIsland.h"
+IORegisterClass(LDResponder, super);
 
-extern "C" uint8_t *kern_contentsOfFile(const char *name);
+static LDResponder *_LDFirstResponder = 0;
 
-class LDGameModule : public IOModule
+void LDResponderDispatchKeyEvent(uint8_t scancode, char character)
 {
-public:
-	virtual bool publish();
-	virtual void unpublish();
+	if(_LDFirstResponder)
+	{
+		if(!_LDFirstResponder->handleEvent(scancode, character))
+		{
+			// TODO: Handle responder chain changes...
+		}
+	}
+}
 
-private:
-	void initGame();
-	void gameTick();
-	void handleInput(uint8_t *scancode, char *character);
+LDResponder *firstResponder()
+{
+	return _LDFirstResponder;
+}
 
-	LDVideoModule *_renderer;
-	LDInputModule *_inputManager;
+bool LDResponder::canBecomeFirstResponder()
+{
+	return false;
+}
 
-	IORemoteCommand *_rendererCommand;
-	IOTimerEventSource *_heartbeat;
+LDResponder *LDResponder::nextResponder()
+{
+	return 0;
+}
 
-	LDGameView *_gameView;
+bool LDResponder::handleEvent(uint8_t UNUSED(scancode), char UNUSED(character))
+{
+	return false;
+}
 
-	IODeclareClass(LDGameModule)
-};
+bool LDResponder::isFirstResponder()
+{
+	return (this == _LDFirstResponder);
+}
 
-#endif /* _LDGame_H_ */
+bool LDResponder::becomeFirstResponder()
+{
+	if(canBecomeFirstResponder())
+	{
+		_previousResponder = _LDFirstResponder;
+		_LDFirstResponder = this;
+	}
+
+	return false;
+}
+
+void LDResponder::resignFirstResponder()
+{
+	if(isFirstResponder())
+	{
+		_previousResponder->becomeFirstResponder();
+	}
+}

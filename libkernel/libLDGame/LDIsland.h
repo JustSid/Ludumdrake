@@ -31,6 +31,7 @@ public:
 
 	void generate(uint32_t maxWidth, uint32_t maxHeight);
 	void takeIsland();
+	void setSelected(bool selected);
 
 private:
 	enum
@@ -42,6 +43,8 @@ private:
 	};
 
 	bool _independent;
+	bool _selected;
+	
 	uint8_t *_tiles;
 
 	IODeclareClass(LDIsland)

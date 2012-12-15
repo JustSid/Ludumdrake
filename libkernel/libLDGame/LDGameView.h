@@ -22,17 +22,30 @@
 #include <libio/libio.h>
 #include <libLDVideo/LDVideo.h>
 
+#include "LDIsland.h"
+
 class LDGameView : public LDView
 {
 public:
 	virtual LDGameView *initWithFrame(const LDFrame &frame);
 
+	virtual bool canBecomeFirstResponder() { return true; }
+	virtual bool handleEvent(uint8_t scancode, char key);
+
 	virtual void draw();
 	void tick();
 
 private:
+	void selectIsland(int32_t index);
+
 	unix_time_t _lastTick;
 	int _tick;
+
+	IOArray *_playerIslands;
+	IOArray *_islands;
+
+	LDIsland *_selectedIsland;
+	int32_t _selected;
 
 	IODeclareClass(LDGameView)
 };

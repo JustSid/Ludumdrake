@@ -1,6 +1,6 @@
 //
-//  LDGame.h
-//  libLDGame
+//  LDResponder.h
+//  libLDInput
 //
 //  Created by Sidney
 //  Copyright (c) 2012 by Sidney
@@ -16,39 +16,29 @@
 //  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef _LDGame_H_
-#define _LDGame_H_
+#ifndef _LDRESPONDER_H_
+#define _LDRESPONDER_H_
 
 #include <libio/libio.h>
-#include <libLDVideo/LDVideo.h>
-#include <libLDInput/LDInput.h>
 
-#include "LDRandom.h"
-#include "LDGameView.h"
-#include "LDIsland.h"
-
-extern "C" uint8_t *kern_contentsOfFile(const char *name);
-
-class LDGameModule : public IOModule
+class LDResponder : public IOObject
 {
 public:
-	virtual bool publish();
-	virtual void unpublish();
+	static LDResponder *firstResponder();
+
+	virtual bool canBecomeFirstResponder();
+	virtual LDResponder *nextResponder();
+
+	virtual bool handleEvent(uint8_t scancode, char character);
+
+	bool isFirstResponder();
+	bool becomeFirstResponder();
+	void resignFirstResponder();
 
 private:
-	void initGame();
-	void gameTick();
-	void handleInput(uint8_t *scancode, char *character);
+	LDResponder *_previousResponder;
 
-	LDVideoModule *_renderer;
-	LDInputModule *_inputManager;
-
-	IORemoteCommand *_rendererCommand;
-	IOTimerEventSource *_heartbeat;
-
-	LDGameView *_gameView;
-
-	IODeclareClass(LDGameModule)
+	IODeclareClass(LDResponder)
 };
 
-#endif /* _LDGame_H_ */
+#endif

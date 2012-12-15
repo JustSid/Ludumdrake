@@ -21,7 +21,7 @@
 #ifdef super
 #undef super
 #endif
-#define super IOObject
+#define super LDResponder
 
 IORegisterClass(LDView, super);
 
@@ -45,6 +45,8 @@ void LDView::free()
 		kfree(_backbuffer);
 
 	_subviews->release();
+	resignFirstResponder();
+
 	super::free();
 }
 

@@ -20,6 +20,7 @@
 #define _LDVIEW_H_
 
 #include <libio/libio.h>
+#include <libLDInput/LDInput.h>
 #include "LDConstants.h"
 
 struct LDFrame
@@ -49,7 +50,7 @@ static inline bool LDFrameIntersects(const LDFrame& frame1, const LDFrame& frame
 }
 
 class LDVideoModule;
-class LDView : public IOObject
+class LDView : public LDResponder
 {
 friend class LDVideoModule;
 public:

@@ -20,6 +20,7 @@
 #define _LDInput_H_
 
 #include <libio/libio.h>
+#include "LDResponder.h"
 
 class LDInputModule : public IOModule
 {

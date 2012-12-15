@@ -42,6 +42,13 @@ LDIsland *LDIsland::initWithFrame(const LDFrame &frame)
 void LDIsland::takeIsland()
 {
 	_independent = false;
+	setNeedsRedraw();
+}
+
+void LDIsland::setSelected(bool selected)
+{
+	_selected = selected;
+	setNeedsRedraw();
 }
 
 void LDIsland::draw()
@@ -57,18 +64,24 @@ void LDIsland::draw()
 	{
 		for(uint32_t y=0; y<frame.height; y++)
 		{
+			uint32_t i = (y * frame.width) + x;
+			uint8_t character = 219;
+
 			if(x == centerX && y == centerY)
 			{
 				LDColor color = (_independent) ? LDConstants::colorBlue : LDConstants::colorRed;
 
-				setCharacter(x, y, 219);
+				if(_selected)
+				{
+					character = 216;
+					color = LDConstants::colorWhite;
+				}
+
+				setCharacter(x, y, character);
 				setColor(x, y, color);
 
 				continue;
 			}
-
-			uint32_t i = (y * frame.width) + x;
-			uint8_t character = 219;
 
 			switch(_tiles[i])
 			{

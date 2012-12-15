@@ -28,6 +28,8 @@ public:
 	virtual LDPopup *initWithText(IOString *text, IOString *title);
 
 	virtual void draw();
+	virtual bool canBecomeFirstResponder();
+	virtual bool handleEvent(uint8_t scancode, char key);
 
 	void show();
 	void close();
