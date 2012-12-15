@@ -47,11 +47,13 @@ void LDLabel::draw()
 	size_t offset = 0;
 	size_t lines = 0;
 
+	int inset = drawBorder() ? 1 : 0;
+
 	while(temp >= string)
 	{
 		if(*temp == '\n')
 		{
-			if((lines ++) >= _frame.height - 2)
+			if((++ lines) >= _frame.height - inset)
 			{
 				offset = (temp + 1) - string;
 				break;
@@ -75,13 +77,13 @@ void LDLabel::draw()
 			x ++;
 		}
 
-		if(x >= _frame.width - 1)
+		if(x >= _frame.width - inset)
 		{
 			y ++;
 			x = 1;
 		}
 
-		if(y >= _frame.height - 1)
+		if(y >= _frame.height - inset)
 			break;
 
 		string ++;
@@ -98,7 +100,7 @@ void LDLabel::setString(IOString *string)
 
 void LDLabel::appendString(IOString *string)
 {
-	size_t maxLength = ((_frame.width - 2) * (_frame.height - 2));
+	size_t maxLength = (_frame.width * _frame.height);
 	IOString *temp = IOString::withFormat("%s%s", _string->CString(), string->CString());
 
 	if(temp->length() > maxLength)

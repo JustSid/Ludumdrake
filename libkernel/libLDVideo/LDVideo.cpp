@@ -42,6 +42,8 @@ bool LDVideoModule::publish()
 	if(!super::publish())
 		return false;
 
+	IOThread::currentThread()->setName(IOString::withCString("LD Renderer"));
+
 	sharedModule = this;
 
 	syslogd_setMessageHandler(&LDVideoModule::handleSyslogdMessage);
@@ -57,12 +59,8 @@ bool LDVideoModule::publish()
 
 	debugCommand = IORemoteCommand::alloc()->init();
 	debugCommand->setAction(this, IOMemberFunctionCast(IORemoteCommand::Action, this, &LDVideoModule::printDebugMessage));
-	
-	_eventSource = IOTimerEventSource::alloc()->initWithDate(IODate::alloc()->initWithTimestampSinceNow(5), true);
-	_eventSource->setAction(this, IOMemberFunctionCast(IOTimerEventSource::Action, this, &LDVideoModule::drawViews));
 
 	runLoop()->addEventSource(debugCommand);
-	runLoop()->addEventSource(_eventSource);
 
 	return true;
 }

@@ -51,9 +51,14 @@ public:
 	virtual void draw();
 
 	void addSubview(LDView *subview);
+	void insertSubview(LDView *subview, uint32_t index);
 	void removeFromSuperview();
 
 	void setDrawBorder(bool drawBorder);
+	void setHidden(bool hidden);
+
+	bool drawBorder() { return _drawBorder; }
+	bool hidden() { return _hidden; }
 
 	virtual void setFrame(const LDFrame& frame);
 	LDFrame frame();
@@ -75,6 +80,7 @@ private:
 
 	bool _drawBorder;
 	bool _needsRedraw;
+	bool _hidden;
 
 	IODeclareClass(LDView)
 };

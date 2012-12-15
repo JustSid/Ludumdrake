@@ -1,6 +1,6 @@
 //
-//  LDVideo.h
-//  libLDVideo
+//  LDGameView.h
+//  libLDGame
 //
 //  Created by Sidney
 //  Copyright (c) 2012 by Sidney
@@ -16,33 +16,25 @@
 //  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef _LDVideo_H_
-#define _LDVideo_H_
+#ifndef _LDGAMEVIEW_H_
+#define _LDGAMEVIEW_H_
 
 #include <libio/libio.h>
-#include "LDView.h"
-#include "LDLabel.h"
+#include <libLDVideo/LDVideo.h>
 
-class LDVideoModule : public IOModule
+class LDGameView : public LDView
 {
 public:
-	virtual bool publish();
-	virtual void unpublish();
+	virtual LDGameView *initWithFrame(const LDFrame &frame);
 
-	void drawViews();
-
-	LDView *rootView() { return _rootView; }
+	virtual void draw();
+	void tick();
 
 private:
-	LDView *_rootView;
-	LDLabel *_debugLabel;
+	unix_time_t _lastTick;
+	int _tick;
 
-	void printDebugMessage(const char *message);
-	static void handleSyslogdMessage(const char *message);
-
-	uint32_t cursorX, cursorY;
-
-	IODeclareClass(LDVideoModule)
+	IODeclareClass(LDGameView)
 };
 
-#endif /* _LDVideo_H_ */
+#endif

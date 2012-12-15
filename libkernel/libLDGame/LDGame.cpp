@@ -26,14 +26,47 @@
 IORegisterModule(LDGameModule);
 IORegisterClass(LDGameModule, super);
 
+void LDGameModule::gameTick()
+{
+	if(!_gameView)
+		return;
+
+	_gameView->tick();
+	_renderer->drawViews();
+}
+
+void LDGameModule::initGame()
+{
+	_gameView = LDGameView::alloc()->initWithFrame(LDFrameMake(0, 0, 80, 25));
+	_renderer->rootView()->insertSubview(_gameView, 0);
+
+	IOLog("LDGameModule::initGame()");
+}
+
 bool LDGameModule::publish()
 {
-	LDVideoModule *video = (LDVideoModule *)IOModule::withName("libLDVideo.so");
-	video->waitForPublish();
+	if(!super::publish())
+		return false;
+
+	IOThread::currentThread()->setName(IOString::withCString("LD Game"));
+
+	_renderer = (LDVideoModule *)IOModule::withName("libLDVideo.so");
+	_renderer->waitForPublish();
 
 	LDRandomSeed((uint32_t)time_getUnixTime());
 
-	return super::publish();
+	_rendererCommand = IORemoteCommand::alloc()->init();
+	_rendererCommand->setAction(this, 0);
+
+	_heartbeat = IOTimerEventSource::alloc()->initWithDate(IODate::alloc()->initWithTimestampSinceNow(5), true);
+	_heartbeat->setAction(this, IOMemberFunctionCast(IOTimerEventSource::Action, this, &LDGameModule::gameTick));
+
+	_renderer->runLoop()->addEventSource(_heartbeat);
+	_renderer->runLoop()->addEventSource(_rendererCommand);
+
+	_rendererCommand->executeAction(IOMemberFunctionCast(IORemoteCommand::Action, this, &LDGameModule::initGame));
+
+	return true;
 }
 
 void LDGameModule::unpublish()

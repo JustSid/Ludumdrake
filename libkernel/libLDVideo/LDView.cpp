@@ -56,14 +56,21 @@ LDFrame LDView::bounds()
 }
 
 
+void LDView::insertSubview(LDView *subview, uint32_t index)
+{
+	subview->removeFromSuperview();
+	subview->_parent = this;
+
+	_subviews->insertObject(subview, index);
+	setNeedsRedraw();
+}
 
 void LDView::addSubview(LDView *subview)
 {
 	subview->removeFromSuperview();
-
-	_subviews->addObject(subview);
 	subview->_parent = this;
 
+	_subviews->addObject(subview);
 	setNeedsRedraw();
 }
 
@@ -81,6 +88,12 @@ void LDView::removeFromSuperview()
 void LDView::setDrawBorder(bool drawBorder)
 {
 	_drawBorder = drawBorder;
+	setNeedsRedraw();
+}
+
+void LDView::setHidden(bool hidden)
+{
+	_hidden = hidden;
 	setNeedsRedraw();
 }
 
@@ -160,16 +173,19 @@ void LDView::draw()
 		LDView *subview = (LDView *)_subviews->objectAtIndex(i);
 		subview->redrawIfNeeded();
 
-		LDFrame frame = subview->frame();
-		size_t width = frame.width * 2;
-
-		for(uint32_t i=0; i<frame.height; i++)
+		if(!subview->hidden())
 		{
-			uint32_t offsetVMem = ((frame.y + i) * _frame.width + frame.x) * 2;
-			uint32_t offsetView = i * width;
+			LDFrame frame = subview->frame();
+			size_t width = frame.width * 2;
 
-			uint8_t *backbuffer = subview->_backbuffer;
-			memcpy(&_backbuffer[offsetVMem], &backbuffer[offsetView], frame.width * 2);
+			for(uint32_t i=0; i<frame.height; i++)
+			{
+				uint32_t offsetVMem = ((frame.y + i) * _frame.width + frame.x) * 2;
+				uint32_t offsetView = i * width;
+
+				uint8_t *backbuffer = subview->_backbuffer;
+				memcpy(&_backbuffer[offsetVMem], &backbuffer[offsetView], frame.width * 2);
+			}
 		}
 	}
 }

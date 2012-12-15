@@ -1,6 +1,6 @@
 //
-//  LDVideo.h
-//  libLDVideo
+//  LDGameView.cpp
+//  libLDGame
 //
 //  Created by Sidney
 //  Copyright (c) 2012 by Sidney
@@ -16,33 +16,46 @@
 //  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef _LDVideo_H_
-#define _LDVideo_H_
+#include "LDGameView.h"
 
-#include <libio/libio.h>
-#include "LDView.h"
-#include "LDLabel.h"
+#ifdef super
+#undef super
+#endif
+#define super LDView
 
-class LDVideoModule : public IOModule
+IORegisterClass(LDGameView, super);
+
+LDGameView *LDGameView::initWithFrame(const LDFrame &frame)
 {
-public:
-	virtual bool publish();
-	virtual void unpublish();
+	if(!super::initWithFrame(frame))
+		return 0;
 
-	void drawViews();
+	return this;
+}
 
-	LDView *rootView() { return _rootView; }
+void LDGameView::tick()
+{
+	unix_time_t time = time_getUnixTime();
+	if(time != _lastTick)
+	{
+		_lastTick = time;
+		_tick ++;
+		_tick %= 3;
 
-private:
-	LDView *_rootView;
-	LDLabel *_debugLabel;
+		setNeedsRedraw();
+	}
+}
 
-	void printDebugMessage(const char *message);
-	static void handleSyslogdMessage(const char *message);
+void LDGameView::draw()
+{
+	super::draw();
 
-	uint32_t cursorX, cursorY;
-
-	IODeclareClass(LDVideoModule)
-};
-
-#endif /* _LDVideo_H_ */
+	for(uint32_t x=0; x<_frame.width; x++)
+	{
+		for(uint32_t y=0; y<_frame.height; y++)
+		{
+			setCharacter(x, y, 176 + _tick);
+			setColor(x, y, LDConstants::colorBlue);
+		}
+	}
+}

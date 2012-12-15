@@ -23,12 +23,23 @@
 #include <libLDVideo/LDVideo.h>
 
 #include "LDRandom.h"
+#include "LDGameView.h"
 
 class LDGameModule : public IOModule
 {
 public:
 	virtual bool publish();
 	virtual void unpublish();
+
+private:
+	void initGame();
+	void gameTick();
+
+	LDVideoModule *_renderer;
+	IORemoteCommand *_rendererCommand;
+	IOTimerEventSource *_heartbeat;
+
+	LDGameView *_gameView;
 
 	IODeclareClass(LDGameModule)
 };
