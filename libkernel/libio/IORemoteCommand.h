@@ -1,6 +1,6 @@
 //
-//  config.h
-//  Firedrake
+//  IORemoteCommand.h
+//  libio
 //
 //  Created by Sidney Just
 //  Copyright (c) 2012 by Sidney Just
@@ -16,26 +16,44 @@
 //  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef _CONFIG_H_
-#define _CONFIG_H_
+#ifndef _IOREMOTECOMMAND_H_
+#define _IOREMOTECOMMAND_H_
 
-#define CONF_RELEASE 0
+#include "IOObject.h"
+#include "IOEventSource.h"
+#include "IOThread.h"
 
-#if CONF_RELEASE == 0
+class IORemoteCommand : public IOEventSource
+{
+public:
+	virtual IORemoteCommand *init();
+	virtual IORemoteCommand *initWithAction(IOObject *owner, Action action);
+	
+	virtual void doWork();
 
-	// Unit testing
-	#define CONF_RUNKUNIT 0
-	#if CONF_RUNKUNIT
-		#define CONF_KUNITFAILSONLY 1
-		#define CONF_KUNITEXITATEND 1
-	#endif
+	void setTimeout(uint64_t timeout);
+	uint64_t timeout();
 
-	// Inlining
-	#define CONF_NOINLINE 0
-	#if CONF_NOINLINE
-		#define CONF_VM_NOINLINE 1
-	#endif
+	IOReturn executeAction(Action action, void *arg0=0, void *arg1=0, void *arg2=0, void *arg3=0, void *arg4=0);
+	IOReturn executeCommand(void *arg0=0, void *arg1=0, void *arg2=0, void *arg3=0, void *arg4=0);
 
-#endif
+private:
+	uint64_t _timeout;
+	IOThread *_caller;
 
-#endif /* _CONFIG_H_ */
+	kern_spinlock_t _lock;
+	bool _waiting;
+	bool _executed;
+	bool _cancelled;
+	bool _executing;
+
+	void *_arg0;
+	void *_arg1;
+	void *_arg2;
+	void *_arg3;
+	void *_arg4;
+
+	IODeclareClass(IORemoteCommand)
+};
+
+#endif /* _IOREMOTECOMMAND_H_ */
